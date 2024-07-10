@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function validateForm() {
+            var checkboxes = document.querySelectorAll('input[name="book_id"]:checked');
+            if (checkboxes.length === 0) {
+                alert('Please choose at least one book.');
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome, {{ session['username'] }}</h2>
+        <h3>Book Management</h3>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for category, message in messages %}
+            <li class="error-message">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/book_management" onsubmit="return validateForm()">
+            <div class="book-categories">
+                {% for category, books in books_by_category.items() %}
+                    <div class="book-category">
+                        <h4 class="category-title">{{ category }}</h4>
+                        <ul class="book-list">
+                            {% for book in books %}
+                                <li class="book-item">
+                                    <label>
+                                        <input type="checkbox" name="book_id" value="{{ book['id'] }}"> 
+                                        <div class="book-title">{{ book['title'] }}</div>
+                                    </label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+            <button type="submit">Add to Cart</button>
+        </form>
+    </div>
+</body>
+</html>
